@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Kalkulator Serbaguna - Dark Mode</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: auto;
+      max-width: 600px;
+      background-color: #121212;
+      color: #f1f1f1;
+    }
+    h2, h3 {
+      text-align: center;
+      color: #ffffff;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      font-size: 1em;
+      background-color: #1e1e1e;
+      color: #f1f1f1;
+      border: 1px solid #444;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .form-section {
+      display: none;
+      margin-top: 20px;
+      border-top: 1px solid #444;
+      padding-top: 15px;
+    }
+    .hasil {
+      margin-top: 15px;
+      background: #1f1f1f;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h2><u><b><i><marquee><blink>Kalkulator Serbaguna</blink></marquee></i></b></u></h2>
+
+  <label for="jenis">Pilih Kalkulator:</label>
+  <select id="jenis" onchange="tampilkanForm()">
+    <option value="">--Pilih--</option>
+    <option value="tabungan">Target Tabungan</option>
+    <option value="diskon">Diskon</option>
+    <option value="pengeluaran">Pengeluaran Bulanan</option>
+  </select>
+
+  <!-- Kalkulator Tabungan -->
+  <div id="formTabungan" class="form-section">
+    <h3>Kalkulator Target Tabungan</h3>
+    <label for="target">Target (Rp):</label>
+    <input type="text" id="target" oninput="formatRupiah(this)">
+
+    <label for="tahun">Tahun:</label>
+    <input type="number" id="tahun" placeholder="Contoh: 10">
+
+    <button onclick="hitungTabungan()">Hitung</button>
+    <div class="hasil">
+      <p><strong>Bulan:</strong> <span id="jumlahBulan">-</span></p>
+      <p><strong>Per Bulan:</strong> <span id="perBulan">-</span></p>
+    </div>
+  </div>
+
+  <!-- Kalkulator Diskon -->
+  <div id="formDiskon" class="form-section">
+    <h3>Kalkulator Diskon</h3>
+    <label for="hargaAwal">Harga Awal (Rp):</label>
+    <input type="text" id="hargaAwal" oninput="formatRupiah(this)">
+
+    <label for="persenDiskon">Diskon (%):</label>
+    <input type="number" id="persenDiskon">
+
+    <button onclick="hitungDiskon()">Hitung</button>
+    <div class="hasil">
+      <p><strong>Harga Setelah Diskon:</strong> <span id="hargaSetelahDiskon">-</span></p>
+    </div>
+  </div>
+
+  <!-- Kalkulator Pengeluaran Lengkap -->
+  <div id="formPengeluaran" class="form-section">
+    <h3>Kalkulator Pengeluaran Bulanan</h3>
+    <label for="gaji">Gaji (Rp):</label>
+    <input type="text" id="gaji" oninput="formatRupiah(this)">
+
+    <label for="tabungan">Tabungan (Rp):</label>
+    <input type="text" id="tabungan" oninput="formatRupiah(this)">
+
+    <label for="beras">Beras (Rp):</label>
+    <input type="text" id="beras" oninput="formatRupiah(this)">
+
+    <label for="bensin">Bensin (Rp):</label>
+    <input type="text" id="bensin" oninput="formatRupiah(this)">
+
+    <label for="listrik">Listrik (Rp):</label>
+    <input type="text" id="listrik" oninput="formatRupiah(this)">
+
+    <label for="air">Air (Rp):</label>
+    <input type="text" id="air" oninput="formatRupiah(this)">
+
+    <label for="susu">Susu Formula (Rp):</label>
+    <input type="text" id="susu" oninput="formatRupiah(this)">
+
+    <label for="popok">Popok (Rp):</label>
+    <input type="text" id="popok" oninput="formatRupiah(this)">
+
+    <label for="lainnya">Lain-lain (Rp):</label>
+    <input type="text" id="lainnya" oninput="formatRupiah(this)">
+
+    <label for="angsuran">Total Cicilan/Pinjaman (Rp):</label>
+    <input type="text" id="angsuran" oninput="formatRupiah(this)">
+
+    <button onclick="hitungPengeluaran()">Hitung</button>
+
+    <div class="hasil">
+      <p><strong>Total Pengeluaran:</strong> <span id="totalPengeluaran">-</span></p>
+      <p><strong>Sisa Gaji:</strong> <span id="sisaGaji">-</span></p>
+    </div>
+  </div>
+
+  <script>
+    function tampilkanForm() {
+      document.getElementById("formTabungan").style.display = "none";
+      document.getElementById("formDiskon").style.display = "none";
+      document.getElementById("formPengeluaran").style.display = "none";
+      const jenis = document.getElementById("jenis").value;
+      if (jenis === "tabungan") {
+        document.getElementById("formTabungan").style.display = "block";
+      } else if (jenis === "diskon") {
+        document.getElementById("formDiskon").style.display = "block";
+      } else if (jenis === "pengeluaran") {
+        document.getElementById("formPengeluaran").style.display = "block";
+      }
+    }
+
+    function formatRupiah(input) {
+      let angka = input.value.replace(/[^\d]/g, "");
+      if (!angka) return input.value = "";
+      input.value = Number(angka).toLocaleString("id-ID");
+    }
+
+    function getNumber(id) {
+      return Number(document.getElementById(id).value.replace(/\./g, "")) || 0;
+    }
+
+    function hitungTabungan() {
+      const target = getNumber("target");
+      const tahun = Number(document.getElementById("tahun").value);
+      if (!target || !tahun || tahun <= 0) {
+        alert("Mohon isi target dan tahun dengan benar!");
+        return;
+      }
+      const bulan = tahun * 12;
+      const perBulan = target / bulan;
+      document.getElementById("jumlahBulan").innerText = `${bulan} bulan`;
+      document.getElementById("perBulan").innerText = `Rp ${perBulan.toLocaleString("id-ID", {maximumFractionDigits: 0})}`;
+    }
+
+    function hitungDiskon() {
+      const harga = getNumber("hargaAwal");
+      const diskon = Number(document.getElementById("persenDiskon").value);
+      if (!harga || diskon < 0 || diskon > 100) {
+        alert("Mohon isi harga dan diskon dengan benar!");
+        return;
+      }
+      const potongan = harga * (diskon / 100);
+      const total = harga - potongan;
+      document.getElementById("hargaSetelahDiskon").innerText = `Rp ${total.toLocaleString("id-ID", {maximumFractionDigits: 0})}`;
+    }
+
+    function hitungPengeluaran() {
+      const gaji = getNumber("gaji");
+      const tabungan = getNumber("tabungan");
+      const beras = getNumber("beras");
+      const bensin = getNumber("bensin");
+      const listrik = getNumber("listrik");
+      const air = getNumber("air");
+      const susu = getNumber("susu");
+      const popok = getNumber("popok");
+      const lainnya = getNumber("lainnya");
+      const angsuran = getNumber("angsuran");
+
+      const total = tabungan + beras + bensin + listrik + air + susu + popok + lainnya + angsuran;
+      const sisa = gaji - total;
+
+      document.getElementById("totalPengeluaran").innerText = `Rp ${total.toLocaleString("id-ID", {maximumFractionDigits: 0})}`;
+      document.getElementById("sisaGaji").innerText = `Rp ${sisa.toLocaleString("id-ID", {maximumFractionDigits: 0})}`;
+    }
+  </script>
+
+</body>
+</html>
